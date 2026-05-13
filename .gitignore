@@ -1,0 +1,23 @@
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Environment variables (Secrets)
+.env
+.env.local
+
+# Dependency directories (Common examples)
+node_modules/
+__pycache__/
+dist/
+build/
