@@ -59,39 +59,45 @@
 const { VoyageAIClient } = require("voyageai");
 require("dotenv/config");
 
-const array = ["I love playing football", "Soccer is my favourite sport", "The stock market crashed today", "I enjoy watching cricket", "Inflation is rising globally"];
+const array = [
+  "I love playing football",
+  "Soccer is my favourite sport",
+  "The stock market crashed today",
+  "I enjoy watching cricket",
+  "Inflation is rising globally",
+];
 
 const voClient = new VoyageAIClient({ apiKey: process.env.VOYAGE_API_KEY });
 
 const cosineSimilarity = (a, b) => {
-    const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
-    const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
-    const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
-    return dot / (magA * magB);
+  const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
+  const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+  const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  return dot / (magA * magB);
 };
 
 const main = async () => {
-    const result = [];
+  const result = [];
 
-    for (let i = 0; i < array.length; i++) {
-        const response = await voClient.embed({
-            input: array[i],
-            model: "voyage-4-lite",
-        });
-        result.push({ message: array[i], vector: response.data[0].embedding });
-    }
+  for (let i = 0; i < array.length; i++) {
+    const response = await voClient.embed({
+      input: array[i],
+      model: "voyage-4-lite",
+    });
+    result.push({ message: array[i], vector: response.data[0].embedding });
+  }
 
-    const queryVector = result[0].vector;
-    const vectorSimilarity = [];
+  const queryVector = result[0].vector;
+  const vectorSimilarity = [];
 
-    for (let i = 1; i < result.length; i++) {
-        const score = cosineSimilarity(queryVector, result[i].vector);
-        vectorSimilarity.push({ message: result[i].message, score });
-    }
+  for (let i = 1; i < result.length; i++) {
+    const score = cosineSimilarity(queryVector, result[i].vector);
+    vectorSimilarity.push({ message: result[i].message, score });
+  }
 
-    vectorSimilarity
-        .sort((a, b) => b.score - a.score)
-        .forEach(item => console.log(item.score.toFixed(4), "→", item.message));
+  vectorSimilarity
+    .sort((a, b) => b.score - a.score)
+    .forEach((item) => console.log(item.score.toFixed(4), "→", item.message));
 };
 
 main();
